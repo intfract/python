@@ -15,7 +15,7 @@ def get(url):
   url.replace(' ', '%20')
   res = requests.get(url, stream=True)
   if url.endswith('.pdf'):
-    with open(f'out/{url[-18:]}', 'wb') as f:
+    with open(f"out/{url.split('/')[-1].split('?')[-1]}", 'wb') as f:
       for chunk in res.iter_content(2000):
         f.write(chunk)
   else:
@@ -33,7 +33,7 @@ def repo(author, repo):
     'author': author,
   }))
 
-  if (type(data) == str):
+  if (type(data) == str or type(data) == KeyError):
     return data
 
   owner = data['owner']['login']
@@ -57,6 +57,17 @@ def repo(author, repo):
     'languages': ratio,
   }
 
+def pastpaper(code, series, year, type, paper, variant):
+  return _('https://papers.gceguide.com/Cambridge IGCSE/{name} ({code})/20{year}/{code}_{series}{year}_{type}_{paper}{variant}.pdf', {
+    'name': codes[code],
+    'code': code,
+    'series': series[:1],
+    'year': str(year)[-2:],
+    'type': type,
+    'paper': paper,
+    'variant': variant,
+  })
+
 username = 'intfract'
 
 user = get(_('https://api.github.com/users/{username}', { 
@@ -69,10 +80,12 @@ users = get('https://api.github.com/search/users?q=type%3Auser')
 # print(users)
 # print(repo('intfract', 'defract'))
 
-print(get(_('https://papers.gceguide.com/Cambridge IGCSE/Sciences - Co-ordinated (Double) (0654)/20{year}/0654_{series}{year}_{type}_{paper}{variant}.pdf', {
-  'series': 'w',
-  'year': '21',
-  'type': 'qp',
-  'paper': 2,
-  'variant': 1,
-})))
+codes = {
+  '0452': 'Accounting',
+  '0654': 'Sciences - Co-ordinated (Double)',
+}
+
+# 2016 pdf papers struggle to load 
+for i in range(21, 16, -1):
+  for j in range(1, 4):
+    get(pastpaper('0654', 'winter', i, 'qp', 2, j))

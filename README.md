@@ -15,3 +15,7 @@ This is a fetcher that can interact with the **GitHub API** and download `.pdf` 
   </details>
 
 </details>
+
+## Notice 
+
+This project was made for educational purposes. You may not hold me accountable for any of the files in the `/out/` directory. 
